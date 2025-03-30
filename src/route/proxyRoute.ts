@@ -1,7 +1,7 @@
 import { TransformStream } from "node:stream/web";
 import { fetch } from "undici";
-import type { Router } from "./Router";
-import { getEnv } from "./getEnv";
+import type { Router } from "../type/Router";
+import { getEnv } from "../getEnv";
 import { Asserts } from "@mjt-engine/assert";
 
 export const proxyRoute: Router = (app) => {
