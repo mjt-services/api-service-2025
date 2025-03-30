@@ -1,6 +1,6 @@
 {
   "name": "@mjt-services/api-service-2025",
-  "version": "2025.3.29-1608",
+  "version": "2025.3.30-1231",
   "sideEffects": false,
   "description": "API service",
   "main": "./dist/index.js",
