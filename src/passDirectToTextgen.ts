@@ -1,46 +1,39 @@
 import type { OpenRouterTextgenRequest } from "@mjt-services/textgen-common-2025";
 import { getConnection } from "./getConnection";
 import type { OpenAiChunk } from "./type/OpenAiChunk";
-
+import { createOpenAiChunkGenerator } from "./createOpenAiChunkGenerator";
 
 export const passDirectToTextgen = async ({
-  body, onUpdate, onDone, onError,
+  body,
+  onUpdate,
+  onDone,
+  onError,
 }: {
   body: OpenRouterTextgenRequest;
-  onUpdate: (chunk: OpenAiChunk) => void;
-  onDone: () => void;
-  onError: () => void;
+  onUpdate?: (chunk: OpenAiChunk) => void;
+  onDone?: () => void;
+  onError?: (error: unknown) => void;
 }) => {
   const con = await getConnection();
-  console.log(JSON.stringify(body, null, 2));
-  return new Promise((resolve, reject) => {
-    con.requestMany({
-      onResponse: (data) => {
-        console.log("onResponse", data);
-        onUpdate({
-          choices: [
-            {
-              delta: {
-                role: "assistant",
-                content: data.delta ?? "",
-              },
-              index: 0,
-              finish_reason: null,
-            },
-          ],
-          id: "",
-          object: "chat.completion.chunk",
-          created: Date.now(),
-          model: body.model ?? "",
-          system_fingerprint: "fp_ollama",
-        });
-        if (data.done) {
-          onDone();
-          resolve(data);
-        }
-      },
-      subject: "textgen.generate",
-      request: { body },
-    });
+  const toOpenAiChunk = createOpenAiChunkGenerator(body);
+  return new Promise<OpenAiChunk>(async (resolve, reject) => {
+    try {
+      await con.requestMany({
+        onResponse: (data) => {
+          console.log(data.delta);
+          const chunk = toOpenAiChunk(data);
+          onUpdate?.(chunk);
+          if (data.done) {
+            onDone?.();
+            resolve(chunk);
+          }
+        },
+        subject: "textgen.generate",
+        request: { body },
+      });
+    } catch (error) {
+      onError?.(error);
+      reject(error);
+    }
   });
 };

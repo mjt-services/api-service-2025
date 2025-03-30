@@ -1,7 +1,7 @@
 /**
  * Interface representing the request payload for the OpenAI Completions API.
  */
-export interface OpenAICompletionRequest {
+export interface OpenAIPromptCompletionRequest {
   /**
    * ID of the model to use for generating completions.
    */
@@ -76,7 +76,7 @@ export interface OpenAICompletionRequest {
 /**
  * Interface representing a single choice in the response from the OpenAI Completions API.
  */
-export interface OpenAICompletionChoice {
+export interface OpenAIPromptCompletionChoice {
   /**
    * The generated text.
    */
@@ -106,7 +106,7 @@ export interface OpenAICompletionChoice {
 /**
  * Interface representing the usage statistics in the response from the OpenAI Completions API.
  */
-export interface OpenAICompletionUsage {
+export interface OpenAIPromptCompletionUsage {
   /**
    * Number of tokens in the prompt.
    */
@@ -126,7 +126,7 @@ export interface OpenAICompletionUsage {
 /**
  * Interface representing the response from the OpenAI Completions API.
  */
-export interface OpenAICompletionResponse {
+export interface OpenAIPromptCompletionResponse {
   /**
    * The identifier of the completion.
    */
@@ -135,7 +135,7 @@ export interface OpenAICompletionResponse {
   /**
    * The type of object returned, typically "text_completion".
    */
-  object: string;
+  object: "text_completion";
 
   /**
    * The creation timestamp of the completion.
@@ -150,10 +150,10 @@ export interface OpenAICompletionResponse {
   /**
    * The list of generated completions.
    */
-  choices: OpenAICompletionChoice[];
+  choices: OpenAIPromptCompletionChoice[];
 
   /**
    * Usage statistics for the completion request.
    */
-  usage: OpenAICompletionUsage;
+  usage?: OpenAIPromptCompletionUsage;
 }
